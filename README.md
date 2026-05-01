@@ -22,7 +22,7 @@ https://github.com/OtaniTomoya/ai-companion-ios
 ## 必要環境
 
 - macOSまたはLinux
-- `uv` で管理するPython環境
+- `uv` 
 - OpenAI APIキー
 - クライアント認証用の共有AIAvatar APIキー
 - VOICEVOXまたはAivisSpeech互換のローカル音声合成サーバー
@@ -116,7 +116,3 @@ iOSクライアントは次のイベントを送信します。
 - `aiavatar.db`
 - `recorded_voices/`
 - `__pycache__/`
-
-## License
-
-このプロジェクト全体に対するオープンソースライセンスは、現時点では付与していません。GitHubで公開されているため閲覧はできますが、後日ライセンスを追加しない限り、再利用、再配布、派生物の作成は許可していません。
