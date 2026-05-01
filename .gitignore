@@ -1,0 +1,20 @@
+.DS_Store
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python runtime files
+.venv/
+.cache/
+__pycache__/
+app/__pycache__/
+*.py[cod]
+
+# Local backend data
+*.db
+*.db-*
+recorded_voices/
+html/
+static/
