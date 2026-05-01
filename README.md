@@ -1,35 +1,33 @@
 # AI Companion Backend
 
-FastAPI WebSocket backend for the AI Companion iOS app.
+AI Companion iOSアプリ用のFastAPI WebSocketバックエンドです。
 
-The iOS client repository is managed separately:
+iOSクライアントは別リポジトリで管理しています。
 
 ```text
 https://github.com/OtaniTomoya/ai-companion-ios
 ```
 
-This backend is intended for local development and protocol reference. It
-provides realtime voice conversation through an AIAvatar-compatible WebSocket
-endpoint.
+このバックエンドは、ローカル開発とプロトコル参照を主目的にしています。AIAvatar互換のWebSocketエンドポイントを通して、リアルタイム音声会話を提供します。
 
 ## Pipeline
 
 - STT: OpenAI `gpt-4o-mini-transcribe`
 - LLM: OpenAI ChatGPT service `gpt-5-nano`
-- TTS: VOICEVOX / AivisSpeech-compatible local endpoint
-- VAD: Silero VAD through `aiavatar`
+- TTS: VOICEVOX / AivisSpeech互換のローカルエンドポイント
+- VAD: `aiavatar` 経由のSilero VAD
 - WebSocket: `/ws`
 - Health check: `/health`
 
-## Requirements
+## 必要環境
 
-- macOS or Linux
-- Python managed through `uv`
-- OpenAI API key
-- Shared AIAvatar API key for client authentication
-- VOICEVOX or AivisSpeech-compatible local TTS server
+- macOSまたはLinux
+- `uv` で管理するPython環境
+- OpenAI APIキー
+- クライアント認証用の共有AIAvatar APIキー
+- VOICEVOXまたはAivisSpeech互換のローカル音声合成サーバー
 
-On macOS, install PortAudio for the `pyaudio` dependency:
+macOSでは、`pyaudio` 依存関係のためにPortAudioをインストールします。
 
 ```bash
 brew install portaudio
@@ -41,9 +39,9 @@ brew install portaudio
 cp .env.example .env
 ```
 
-Write real secrets only in `.env`.
+実際のシークレットは `.env` だけに書いてください。
 
-Minimum required values:
+最低限必要な値は次の通りです。
 
 ```env
 OPENAI_API_KEY=<your-openai-api-key>
@@ -55,7 +53,7 @@ VOICEVOX_BASE_URL=http://127.0.0.1:50021
 VOICEVOX_SPEAKER=8
 ```
 
-Then install dependencies and start the backend:
+依存関係をインストールし、バックエンドを起動します。
 
 ```bash
 uv sync
@@ -69,53 +67,48 @@ curl http://127.0.0.1:8000/health
 # {"ok": true}
 ```
 
-The first WebSocket connection can take longer because the VAD model may be
-initialized or downloaded.
+最初のWebSocket接続では、VADモデルの初期化またはダウンロードにより時間がかかることがあります。
 
-## iOS Client Connection
+## iOSクライアント接続
 
-iOS simulator with local backend:
+iOSシミュレータからローカルバックエンドへ接続する場合:
 
 ```text
 ws://127.0.0.1:8000/ws
 ```
 
-Physical iPhone on the same network:
+同じネットワーク上の実機iPhoneから接続する場合:
 
 ```text
 ws://<mac-lan-ip>:8000/ws
 ```
 
-Public or external backends should use TLS:
+公開環境や外部バックエンドではTLSを使ってください。
 
 ```text
 wss://<your-backend-host>/ws
 ```
 
-Enter the same `AIAVATAR_API_KEY` in the iOS app settings.
+iOSアプリの設定画面には、同じ `AIAVATAR_API_KEY` を入力してください。
 
 ## WebSocket Protocol
 
-The iOS client sends:
+iOSクライアントは次のイベントを送信します。
 
-- `type: "start"`: session start
-- `type: "data"` + `audio_data`: PCM audio chunk
-- `type: "invoke"` + `text`: text invocation
-- `type: "camera_context"` + `files[0].url`: recent camera frame in vision mode
-- `type: "config"` + `metadata.journal_mode`: journal mode state and prompt
-  context
-- `type: "stop"`: session stop
+- `type: "start"`: セッション開始
+- `type: "data"` + `audio_data`: PCM音声チャンク
+- `type: "invoke"` + `text`: テキスト入力による呼び出し
+- `type: "camera_context"` + `files[0].url`: vision modeでの直近カメラフレーム
+- `type: "config"` + `metadata.journal_mode`: journal mode状態とprompt context
+- `type: "stop"`: セッション停止
 
-The backend returns AIAvatar events such as `chunk`, `final`, `voiced`, `stop`,
-and `error`. Synthesized audio is returned as base64 WAV data in `audio_data`.
+バックエンドは、`chunk`、`final`、`voiced`、`stop`、`error` などのAIAvatarイベントを返します。合成音声は `audio_data` にbase64 WAVデータとして返します。
 
-## Privacy And Local Data
+## プライバシーとローカルデータ
 
-This backend can process microphone audio, conversation text, camera frames, and
-journal prompt context sent by the iOS app. Run it only in an environment you
-control, and do not expose it without authentication and TLS.
+このバックエンドは、iOSアプリから送信されるマイク音声、会話テキスト、カメラフレーム、journal prompt contextを処理します。自分が管理できる環境でのみ実行し、認証とTLSなしで外部公開しないでください。
 
-Do not commit:
+コミットしてはいけないもの:
 
 - `.env`
 - `.venv/`
@@ -126,6 +119,4 @@ Do not commit:
 
 ## License
 
-No project-wide open source license is currently granted. Public GitHub access
-allows viewing the repository, but reuse, redistribution, or derivative works
-are not permitted unless a license is added later.
+このプロジェクト全体に対するオープンソースライセンスは、現時点では付与していません。GitHubで公開されているため閲覧はできますが、後日ライセンスを追加しない限り、再利用、再配布、派生物の作成は許可していません。
